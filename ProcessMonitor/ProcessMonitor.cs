@@ -11,14 +11,13 @@ namespace Monitor
 		private Serilog.Core.Logger logger;
 
 		public ProcessMonitor(string name, TimeSpan lifetime, TimeSpan frequency) {
+			if(string.IsNullOrWhiteSpace(name)) {
+				throw new Exception("Invalid inputs : Process name is empty");
+			}
+			
 			this.name = name;
 			this.lifetime = lifetime;
 			this.frequency = frequency;
-
-			if(name.Trim() == "") {
-				throw new Exception("Invalid inputs : Process name is empty");
-			}
-
 			this.logger = new LoggerConfiguration().WriteTo.Console().CreateLogger();
 		}
 
@@ -57,6 +56,11 @@ namespace Monitor
 			}
 
 			var processName = args[0];
+			if (String.IsNullOrWhiteSpace(processName)) {
+				Console.WriteLine("Invalid or empty arguments provided for name: {0}", processName);
+				return;
+			}
+
 			TimeSpan lifetime = TimeSpan.Zero, frequency = TimeSpan.Zero;
 			try {
 				lifetime = TimeSpan.Parse("00:" + args[1] + ":00");
